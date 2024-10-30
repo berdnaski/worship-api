@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  LEADER
+  MEMBER
+}
+
+model User {
+  id                   String   @id @default(uuid())
+  name                 String
+  email                String   @unique
+  passwordHash         String
+  role                 Role     @default(MEMBER)
+  intialSetupCompleted Boolean  @default(false)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  department   Department @relation(fields: [departmentId], references: [id])
+  departmentId String
+
+  schedules ScheduleParticipant[] @relation()
+}
+
+model Department {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users     User[]     @relation()
+  schedules Schedule[] @relation()
+}
+
+model Schedule {
+  id           String   @id @default(uuid())
+  name         String
+  date         DateTime
+  time         DateTime
+  departmentId String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  department Department @relation(fields: [departmentId], references: [id])
+
+  participants ScheduleParticipant[] @relation()
+}
+
+enum ParticipantStatus {
+  PENDING
+  CONFIRMED
+  REJECTED
+}
+
+model ScheduleParticipant {
+  id         String            @id @default(uuid())
+  scheduleId String
+  userId     String
+  status     ParticipantStatus @default(PENDING)
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+
+  schedule Schedule @relation(fields: [scheduleId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+}
+
+model Song {
+  id          String        @id @default(uuid())
+  title       String
+  artist      String
+  genre       String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  SongVersion SongVersion[]
+}
+
+model SongVersion {
+  id          String   @id @default(uuid())
+  versionName String
+  songId      String
+  rating      String
+  key         String
+  linkChord   String?
+  linkVideo   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  song Song @relation(fields: [songId], references: [id])
+}

@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  schedule_church:
+    image: bitnami/postgresql
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRESQL_USERNAME=worship
+      - POSTGRESQL_PASSWORD=worshipiisc
+      - POSTGRESQL_DATABASE=worship_db
