@@ -24,7 +24,13 @@ export interface DepartmentResponse {
   updatedAt: Date;
 }
 
+export interface DepartmentUpdate {
+  name?: string;
+  description?: string | null;
+}
+
 export interface DepartmentRepository {
   create(data: DepartmentCreate): Promise<Department>;
-  addUserToDepartment(id: string, departmentId: string): Promise<void>
+  update(id: string, data: DepartmentUpdate): Promise<Department | null>
+  findById(id: string): Promise<Department | null>
 }

@@ -1,4 +1,4 @@
-import type { DepartmentCreate, DepartmentRepository, DepartmentResponse } from "../interfaces/department.interface";
+import type { Department, DepartmentCreate, DepartmentRepository, DepartmentResponse, DepartmentUpdate } from "../interfaces/department.interface";
 import type { UserRepository } from "../interfaces/user.interface";
 import { DepartmentRepositoryPrisma } from "../repositories/department.repository";
 import { UserRepositoryPrisma } from "../repositories/user.repository";
@@ -28,6 +28,18 @@ class DepartmentUseCase {
     await this.userRepository.addUserToDepartment(id, department.id);
 
     return department;
+  }
+
+  async update(id: string, data: DepartmentUpdate): Promise<Department | null> {
+    const existingDepartment = await this.departmentRepository.findById(id);
+
+    if (!existingDepartment) {
+      throw new Error("Department not found");
+    }
+
+    const update = await this.departmentRepository.update(id, data);
+
+    return update;
   }
 }
 

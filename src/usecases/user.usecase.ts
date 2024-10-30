@@ -142,8 +142,7 @@ class UserUseCase {
     if (!userToDelete) {
       throw new Error("User not found");
     }
-  
-    // Permite que apenas um ADMIN ou o próprio usuário possam deletar
+
     if (requesterRole !== 'ADMIN' && requesterId !== id) {
       throw new Error("Permission denied");
     }
