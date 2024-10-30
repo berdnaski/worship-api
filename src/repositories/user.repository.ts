@@ -61,6 +61,18 @@ class UserRepositoryPrisma implements UserRepository {
       }
     });
   }
+
+  async addUserToDepartment(userId: string, departmentId: string): Promise<void> {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        department: {
+          connect: { id: departmentId }
+        },
+      },
+    });
+  }
+  
 }
 
 export { UserRepositoryPrisma };

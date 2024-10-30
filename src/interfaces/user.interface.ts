@@ -7,6 +7,7 @@ export interface User {
   initialSetupCompleted: boolean;
   createdAt: Date;
   updatedAt: Date;
+  departmentId?: string | null; 
 }
 
 export interface UserCreate {
@@ -46,4 +47,5 @@ export interface UserRepository {
   update(id: string, data: UserUpdate): Promise<User | null>;
   findAll(): Promise<UserResponse[]>;
   delete(id: string): Promise<void>;
+  addUserToDepartment(id: string, departmentId: string): Promise<void>
 }

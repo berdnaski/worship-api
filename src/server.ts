@@ -3,6 +3,7 @@ import { userRoutes } from "./routes/user.routes";
 import jwt from "@fastify/jwt";
 import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
+import { departmentRoutes } from "./routes/department.routes";
 
 const app: FastifyInstance = fastify();
 
@@ -36,6 +37,10 @@ app.register(swaggerUi, {
 app.register(userRoutes, {
   prefix: "/"
 });
+
+app.register(departmentRoutes, {
+  prefix: "/"
+})
 
 app.listen({
   port: 3333,
