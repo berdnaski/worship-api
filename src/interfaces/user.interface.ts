@@ -17,6 +17,20 @@ export interface UserCreate {
   departmentId?: string;
 }
 
+export interface UserResponse {
+  id: string;
+  email: string;
+  name: string;
+  role: 'ADMIN' | 'LEADER' | 'MEMBER';
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface UserLogin {
+  email: string;
+  password: string;
+}
+
 export interface UserRepository {
   create(data: UserCreate): Promise<User>;
   findByEmail(email: string): Promise<User | null>;
