@@ -1,4 +1,4 @@
-import type { User, UserCreate, UserRepository, UserUpdate } from "../interfaces/user.interface";
+import type { User, UserCreate, UserRepository, UserResponse, UserUpdate } from "../interfaces/user.interface";
 import { prisma } from "../database/prisma-client";
 import bcrypt from "bcrypt";
 
@@ -48,6 +48,18 @@ class UserRepositoryPrisma implements UserRepository {
     });
 
     return result;
+  }
+
+  async findAll(): Promise<UserResponse[]> {
+    return await prisma.user.findMany();
+  }
+
+  async delete(id: string): Promise<void> {
+    await prisma.user.delete({
+      where: {
+        id: id,
+      }
+    });
   }
 }
 

@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import type { User, UserCreate, UserLogin, UserRepository, UserUpdate } from "../interfaces/user.interface";
+import type { User, UserCreate, UserLogin, UserRepository, UserResponse, UserUpdate } from "../interfaces/user.interface";
 import { UserRepositoryPrisma } from "../repositories/user.repository";
 import bcrypt from "bcrypt";
 
@@ -100,6 +100,57 @@ class UserUseCase {
   
     return this.sanitizeUser(updatedUser);
   }
+
+  async findAll(): Promise<UserResponse[]> {
+    const users = await this.userRepository.findAll();
+
+    return users.map(user => ({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    }));
+  }
+
+  async findByUser(id: string): Promise<UserResponse | null> {
+    const user = await this.userRepository.findById(id);
+
+    if (!user) {
+      return null;
+    }
+
+    return this.sanitizeUser(user);
+  }
+
+  async update(id: string, data: UserUpdate): Promise<User | null> {
+    const existing_user = await this.userRepository.findById(id);
+
+    if (!existing_user) {
+      throw new Error("User not found");
+    }
+
+    const update = await this.userRepository.update(id, data);
+
+    return update;
+  }
+
+  async delete(id: string, requesterId: string, requesterRole: 'ADMIN' | 'LEADER' | 'MEMBER'): Promise<void> {
+    const userToDelete = await this.userRepository.findById(id);
+  
+    if (!userToDelete) {
+      throw new Error("User not found");
+    }
+  
+    // Permite que apenas um ADMIN ou o próprio usuário possam deletar
+    if (requesterRole !== 'ADMIN' && requesterId !== id) {
+      throw new Error("Permission denied");
+    }
+  
+    await this.userRepository.delete(id);
+  }
+  
 }
 
 export { UserUseCase };

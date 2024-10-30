@@ -11,20 +11,26 @@ app.register(jwt, {
 });
 
 app.register(swagger, {
-  swagger: {
+  openapi: {
     info: {
       title: 'My API',
       description: 'API Documentation',
       version: '1.0.0',
     },
-    tags: [
-      { name: 'users', description: 'User related endpoints' }
-    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
   },
 });
 
 app.register(swaggerUi, {
-  routePrefix: '/docs', 
+  routePrefix: '/docs',
 });
 
 app.register(userRoutes, {
