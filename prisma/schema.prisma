@@ -23,8 +23,8 @@ model User {
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
-  department   Department @relation(fields: [departmentId], references: [id])
-  departmentId String
+  department   Department? @relation(fields: [departmentId], references: [id])
+  departmentId String?
 
   schedules ScheduleParticipant[]
 
