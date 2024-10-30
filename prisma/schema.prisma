@@ -14,19 +14,21 @@ enum Role {
 }
 
 model User {
-  id                   String   @id @default(uuid())
-  name                 String
-  email                String   @unique
-  passwordHash         String
-  role                 Role     @default(MEMBER)
-  intialSetupCompleted Boolean  @default(false)
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
+  id                    String   @id @default(uuid())
+  name                  String
+  email                 String   @unique
+  passwordHash          String
+  role                  Role     @default(MEMBER)
+  initialSetupCompleted Boolean  @default(false)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 
   department   Department @relation(fields: [departmentId], references: [id])
   departmentId String
 
-  schedules ScheduleParticipant[] @relation()
+  schedules ScheduleParticipant[]
+
+  @@map("users")
 }
 
 model Department {
@@ -36,8 +38,10 @@ model Department {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  users     User[]     @relation()
-  schedules Schedule[] @relation()
+  users     User[]
+  schedules Schedule[]
+
+  @@map("departments")
 }
 
 model Schedule {
@@ -49,9 +53,10 @@ model Schedule {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  department Department @relation(fields: [departmentId], references: [id])
+  department   Department            @relation(fields: [departmentId], references: [id])
+  participants ScheduleParticipant[]
 
-  participants ScheduleParticipant[] @relation()
+  @@map("schedules")
 }
 
 enum ParticipantStatus {
@@ -70,6 +75,8 @@ model ScheduleParticipant {
 
   schedule Schedule @relation(fields: [scheduleId], references: [id])
   user     User     @relation(fields: [userId], references: [id])
+
+  @@map("schedule_participants")
 }
 
 model Song {
@@ -80,13 +87,15 @@ model Song {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   SongVersion SongVersion[]
+
+  @@map("songs")
 }
 
 model SongVersion {
   id          String   @id @default(uuid())
   versionName String
   songId      String
-  rating      String
+  rating      Int
   key         String
   linkChord   String?
   linkVideo   String?
@@ -94,4 +103,6 @@ model SongVersion {
   updatedAt   DateTime @updatedAt
 
   song Song @relation(fields: [songId], references: [id])
+
+  @@map("song_versions")
 }
