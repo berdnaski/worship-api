@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import type { User, UserCreate, UserLogin, UserRepository } from "../interfaces/user.interface";
+import type { User, UserCreate, UserLogin, UserRepository, UserUpdate } from "../interfaces/user.interface";
 import { UserRepositoryPrisma } from "../repositories/user.repository";
 import bcrypt from "bcrypt";
 
@@ -56,7 +56,49 @@ class UserUseCase {
       role: user.role
     });
 
-    return { user: this.sanitizeUser(user), token }; // Use o método sanitizeUser
+    return { user: this.sanitizeUser(user), token }; 
+  }
+
+  async setup(userId: string, role: 'ADMIN' | 'LEADER' | 'MEMBER', code?: string): Promise<Omit<User, 'passwordHash'>> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+  
+    if (user.initialSetupCompleted) {
+      throw new Error("Initial setup already completed");
+    }
+  
+    const MEMBER_CODE = "KEOCI321";
+    const LEADER_CODE = "KEO43fvCI123";
+  
+    let updatedRole: 'ADMIN' | 'LEADER' | 'MEMBER' = role;
+  
+    if (role === "LEADER" && code !== LEADER_CODE) {
+      throw new Error("Invalid code for the specified role");
+    } else if (role === "MEMBER" && code !== MEMBER_CODE) {
+      throw new Error("Invalid code for the specified role");
+    }
+
+    if (code === LEADER_CODE) {
+      updatedRole = "LEADER"; 
+    } else if (code === MEMBER_CODE) {
+      updatedRole = "MEMBER"; 
+    }
+  
+    const userUpdateData: UserUpdate = {
+      initialSetupCompleted: true,
+      role: updatedRole 
+    };
+  
+    console.log("Updating user with data:", userUpdateData);
+    const updatedUser = await this.userRepository.update(userId, userUpdateData);
+
+    if (!updatedUser) {
+      throw new Error("Failed to update user");
+    }
+  
+    return this.sanitizeUser(updatedUser);
   }
 }
 

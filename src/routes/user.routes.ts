@@ -7,7 +7,7 @@ export async function userRoutes(fastify: FastifyInstance) {
   const userUseCase = new UserUseCase(fastify);
 
   fastify.addHook("onRequest", async (req, reply) => {
-    if (req.url === "/" || req.url === "/login") return;
+    if (req.url === "/" || req.url === "/login" || req.url === "/setup") return;
     await verifyJWT(req, reply);
   })
 
@@ -45,5 +45,19 @@ export async function userRoutes(fastify: FastifyInstance) {
     } catch (error) {
       reply.code(401).send();
     }
-  })
+  });
+
+  fastify.post<{ Body: { userId: string; role: 'ADMIN' | 'LEADER' | 'MEMBER'; code?: string } }>("/setup", async (req: FastifyRequest<{ Body: { userId: string; role: 'ADMIN' | 'LEADER' | 'MEMBER'; code?: string } }>, reply: FastifyReply) => {
+    const { userId, role, code } = req.body;
+  
+    try {
+      const user = await userUseCase.setup(userId, role, code);
+      return reply.status(200).send({ user });
+    } catch (error) {
+      console.error(error);
+      const message = (error as Error).message || 'An unexpected error occurred'; 
+      reply.status(400).send({ message });
+    }
+  });
+  
 }

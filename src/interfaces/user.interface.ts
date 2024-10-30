@@ -31,7 +31,17 @@ export interface UserLogin {
   password: string;
 }
 
+export interface UserUpdate {
+  name?: string;
+  email?: string;
+  role?: "ADMIN" | "LEADER" | "MEMBER";
+  departmentId?: string;
+  initialSetupCompleted?: boolean;
+}
+
 export interface UserRepository {
   create(data: UserCreate): Promise<User>;
   findByEmail(email: string): Promise<User | null>;
+  findById(id: string): Promise<User | null>;
+  update(id: string, data: UserUpdate): Promise<User | null>
 }

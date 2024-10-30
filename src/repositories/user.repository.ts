@@ -1,5 +1,4 @@
-import type { User } from "@prisma/client";
-import type { UserCreate, UserRepository } from "../interfaces/user.interface";
+import type { User, UserCreate, UserRepository, UserUpdate } from "../interfaces/user.interface";
 import { prisma } from "../database/prisma-client";
 import bcrypt from "bcrypt";
 
@@ -28,6 +27,27 @@ class UserRepositoryPrisma implements UserRepository {
     });
 
     return result || null;
+  }
+
+  async findById(id: string): Promise<User | null> {
+    const result = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    return result || null;
+  }
+
+  async update(id: string, data: UserUpdate): Promise<User | null> {
+    const result = await prisma.user.update({
+      where: { id },
+      data: {
+        ...data,
+      },
+    });
+
+    return result;
   }
 }
 
