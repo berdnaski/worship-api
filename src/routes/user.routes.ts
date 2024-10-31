@@ -21,6 +21,7 @@ export async function userRoutes(fastify: FastifyInstance) {
 
   fastify.post<{ Body: UserCreate }>("/register", {
     schema: {
+      tags: ['Users'], 
       body: userCreateSchema,
       response: {
         200: {
@@ -68,6 +69,7 @@ export async function userRoutes(fastify: FastifyInstance) {
 
   fastify.post<{ Body: UserLogin }>("/login", {
     schema: {
+      tags: ['Users'], 
       body: userLoginSchema,
       response: {
         200: {
@@ -108,6 +110,7 @@ export async function userRoutes(fastify: FastifyInstance) {
 
   fastify.post<{ Body: { userId: string; role: 'ADMIN' | 'LEADER' | 'MEMBER'; code?: string } }>("/setup", {
     schema: {
+      tags: ['Users'], 
       body: userSetupSchema,
       response: {
         200: {
@@ -134,6 +137,7 @@ export async function userRoutes(fastify: FastifyInstance) {
 
   fastify.get("/users", {
     schema: {
+      tags: ['Users'], 
       security: [
         { bearerAuth: [] }
       ],
@@ -153,6 +157,7 @@ export async function userRoutes(fastify: FastifyInstance) {
 
   fastify.get<{ Params: { id: string } }>("/users/:id", {
     schema: {
+      tags: ['Users'], 
       security: [
         { bearerAuth: [] }
       ],
@@ -185,6 +190,7 @@ export async function userRoutes(fastify: FastifyInstance) {
 
   fastify.put<{ Body: UserUpdate, Params: { id: string } }>("/users/:id", {
     schema: {
+      tags: ['Users'], 
       params: {
         type: 'object',
         properties: {
@@ -218,6 +224,7 @@ export async function userRoutes(fastify: FastifyInstance) {
 
   fastify.delete<{ Params: { id: string } }>("/users/:id", {
     schema: {
+      tags: ['Users'], 
       security: [
         { bearerAuth: [] }
       ],
