@@ -6,6 +6,7 @@ import swaggerUi from "@fastify/swagger-ui";
 import { departmentRoutes } from "./routes/department.routes";
 import { schedulesRoutes } from "./routes/schedules.routes";
 import { scheduleParticipantRoutes } from "./routes/schedule.participant.routes";
+import { songRoutes } from "./routes/song.routes";
 
 const app: FastifyInstance = fastify();
 
@@ -49,6 +50,10 @@ app.register(schedulesRoutes, {
 })
 
 app.register(scheduleParticipantRoutes, {
+  prefix: "/"
+})
+
+app.register(songRoutes, {
   prefix: "/"
 })
 
