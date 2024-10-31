@@ -34,5 +34,30 @@ export async function schedulesRoutes(fastify: FastifyInstance) {
       return reply.code(500).send({ message: 'Internal Server Error' });
     }
   });
-  
+
+  fastify.get('/departments/:departmentId/schedules', {
+    schema: {
+        security: [
+            { bearerAuth: [] }
+        ],
+        ...ScheduleSchemas.listSchemas,
+    }
+    }, async (req, reply) => {
+        try {
+            const { departmentId } = req.params as { departmentId: string };
+
+            const schedules = await schedulesUseCase.findAll(departmentId);
+            
+            return reply.status(200).send(schedules);
+        } catch (error: unknown) { 
+            if (error instanceof Error) { 
+                if (error.message === "Department not found") {
+                    return reply.status(404).send({ message: 'Department not found' });
+                }
+                return reply.status(500).send({ message: 'Internal Server Error' });
+            }
+
+            return reply.status(500).send({ message: 'Internal Server Error' });
+        }
+    });
 }

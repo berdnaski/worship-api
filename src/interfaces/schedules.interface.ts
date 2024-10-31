@@ -12,6 +12,12 @@ export interface ScheduleCreate {
   date: Date;
 }
 
+export interface ScheduleResponse {
+  name: string;
+  date: Date;
+}
+
 export interface SchedulesRepository {
   create(data: ScheduleCreate & { departmentId: string }): Promise<Schedule>;
+  findAllByDepartment(departmentId: string): Promise<ScheduleResponse[]>;
 }

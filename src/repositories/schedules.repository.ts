@@ -1,5 +1,5 @@
 import type { Schedule } from "@prisma/client";
-import type { ScheduleCreate, SchedulesRepository } from "../interfaces/schedules.interface";
+import type { ScheduleCreate, ScheduleResponse, SchedulesRepository } from "../interfaces/schedules.interface";
 import { prisma } from "../database/prisma-client";
 
 class SchedulesRepositoryPrisma implements SchedulesRepository {
@@ -10,6 +10,14 @@ class SchedulesRepositoryPrisma implements SchedulesRepository {
         date: data.date,
         department: { connect: { id: data.departmentId } }
     },
+    });
+  }
+
+  async findAllByDepartment(departmentId: string): Promise<ScheduleResponse[]> {
+    return await prisma.schedule.findMany({
+      where: {
+        departmentId
+      }
     });
   }
 }
