@@ -20,6 +20,36 @@ class SchedulesRepositoryPrisma implements SchedulesRepository {
       }
     });
   }
+
+  async findByDepartmentAndId(departmentId: string, scheduleId: string): Promise<Schedule | null> {
+    return await prisma.schedule.findFirst({
+      where: {
+        id: scheduleId,
+        departmentId: departmentId,
+      },
+    });
+  }
+
+  async update(data: Schedule & { departmentId: string }): Promise<Schedule> {
+    return await prisma.schedule.update({
+        where: {
+            id: data.id,
+        },
+        data: {
+            name: data.name,
+            date: data.date,
+            departmentId: data.departmentId,
+        },
+    });
+  }
+
+  async delete(scheduleId: string): Promise<void> {
+    await prisma.schedule.delete({
+      where: {
+        id: scheduleId,
+      }
+    })
+  }
 }
 
 export { SchedulesRepositoryPrisma }
