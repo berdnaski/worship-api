@@ -34,6 +34,29 @@ class DepartmentRepositoryPrisma implements DepartmentRepository {
       }
     });
   }
+
+  async addUser(departmentId: string, id: string): Promise<void> {
+    await prisma.department.update({
+      where: { id: departmentId },
+      data: {
+        users: {
+          connect: { id }
+        },
+      },
+    });
+  }
+  
+
+  async removeUser(departmentId: string, id: string): Promise<void> {
+    await prisma.department.update({
+      where: { id: departmentId },
+      data: {
+        users: {
+          disconnect: { id }
+        },
+      },
+    })
+  }
 }
 
 export { DepartmentRepositoryPrisma }

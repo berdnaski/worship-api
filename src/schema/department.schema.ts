@@ -173,6 +173,74 @@ export const DepartmentSchemas = {
       },
     },
   },  
+  
+  addUserToDepartment: {
+    description: 'Add a user to a department',
+    tags: ['Department'],
+    params: {
+      type: 'object',
+      required: ['departmentId', 'id'],
+      properties: {
+        departmentId: { type: 'string', description: 'The unique identifier of the department' },
+        id: { type: 'string', description: 'The unique identifier of the user to be added' },
+      },
+    },
+    response: {
+      201: {
+        description: 'User added to department successfully',
+        type: 'object',
+        properties: {
+          message: { type: 'string', description: 'Success message' },
+        },
+      },
+      400: {
+        description: 'Bad request',
+        type: 'object',
+        properties: {
+          message: { type: 'string' },
+        },
+      },
+      500: {
+        description: 'Internal server error',
+        type: 'object',
+        properties: {
+          message: { type: 'string' },
+        },
+      },
+    },
+  },
+
+  removeUserFromDepartment: {
+    description: 'Remove a user from a department',
+    tags: ['Department'],
+    params: {
+      type: 'object',
+      required: ['departmentId', 'userId'],
+      properties: {
+        departmentId: { type: 'string', description: 'The unique identifier of the department' },
+        userId: { type: 'string', description: 'The unique identifier of the user to be removed' },
+      },
+    },
+    response: {
+      204: {
+        description: 'User removed from department successfully',
+      },
+      400: {
+        description: 'Bad request',
+        type: 'object',
+        properties: {
+          message: { type: 'string' },
+        },
+      },
+      500: {
+        description: 'Internal server error',
+        type: 'object',
+        properties: {
+          message: { type: 'string' },
+        },
+      },
+    },
+  },
 };
 
 

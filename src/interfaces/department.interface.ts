@@ -35,4 +35,6 @@ export interface DepartmentRepository {
   findById(id: string): Promise<Department | null>
   findAll(): Promise<DepartmentResponse[]>
   delete(departmentId: string): Promise<void>
+  addUser(departmentId: string, id: string): Promise<void>
+  removeUser(departmentId: string, id: string): Promise<void>
 }

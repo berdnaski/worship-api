@@ -77,6 +77,14 @@ class DepartmentUseCase {
 
     return department;
   }
+
+  async addUserToDepartment(departmentId: string, id: string): Promise<void> {
+    await this.departmentRepository.addUser(departmentId, id);
+}
+  
+  async removeUserFromDepartment(departmentId: string, id: string): Promise<void> {
+    await this.departmentRepository.removeUser(departmentId, id);
+  }
 }
 
 export { DepartmentUseCase };

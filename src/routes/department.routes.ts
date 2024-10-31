@@ -3,6 +3,7 @@ import { DepartmentUseCase } from "../usecases/department.usecase";
 import { DepartmentSchemas } from "../../src/schema/department.schema";
 import type { DepartmentCreate, DepartmentUpdate } from "../interfaces/department.interface";
 import { verifyJWT } from "../middlewares/verify-jwt";
+import { verifyUserRole } from "../middlewares/verify-role";
 
 export async function departmentRoutes(fastify: FastifyInstance) {
 
@@ -130,4 +131,79 @@ export async function departmentRoutes(fastify: FastifyInstance) {
       return reply.code(statusCode).send({ message: error instanceof Error ? error.message : 'Internal Server Error' });
     }
   });  
+
+  fastify.post('/departments/:departmentId/users/:id', { 
+    preHandler: verifyUserRole('ADMIN', 'LEADER'), 
+    schema: {
+      security: [
+        { bearerAuth: [] } 
+      ],
+      description: 'Add a user to a department',
+      tags: ['Department'], // Isso assegura que a rota seja agrupada sob "Departments"
+      params: {
+        type: 'object',
+        properties: {
+          departmentId: { type: 'string', description: 'ID of the department' },
+          id: { type: 'string', description: 'ID of the user to add' }
+        },
+        required: ['departmentId', 'id'],
+      },
+      response: {
+        201: {
+          description: 'User added to department successfully.',
+          type: 'object',
+          properties: {
+            message: { type: 'string' }
+          },
+        },
+        400: {
+          description: 'Bad Request',
+        },
+      },
+    }
+  }, async (req: FastifyRequest, reply: FastifyReply) => {
+    const { departmentId, id } = req.params as { departmentId: string; id: string };
+    
+    try {
+      await departmentUseCase.addUserToDepartment(departmentId, id);
+      return reply.status(201).send({ message: "User added to department successfully." });
+    } catch (error) {
+      return reply.code(400).send();
+    }
+  });
+
+  fastify.delete('/departments/:departmentId/users/:userId', { 
+    preHandler: verifyUserRole('ADMIN', 'LEADER'), 
+    schema: {
+      security: [
+        { bearerAuth: [] } 
+      ],
+      description: 'Remove a user from a department',
+      tags: ['Department'], 
+      params: {
+        type: 'object',
+        properties: {
+          departmentId: { type: 'string', description: 'ID of the department' },
+          userId: { type: 'string', description: 'ID of the user to remove' }
+        },
+        required: ['departmentId', 'userId'],
+      },
+      response: {
+        204: {
+          description: 'User removed from department successfully.',
+        },
+        400: {
+          description: 'Bad Request',
+        },
+      },
+    }
+  }, async (request, reply) => {
+    const { departmentId, userId } = request.params as { departmentId: string, userId: string };
+    try {
+      await departmentUseCase.removeUserFromDepartment(departmentId, userId);
+      reply.code(204).send(); 
+    } catch (error) {
+      reply.code(400).send();
+    }
+  });
 }
