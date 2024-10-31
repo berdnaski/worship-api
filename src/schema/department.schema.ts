@@ -143,4 +143,36 @@ export const DepartmentSchemas = {
       },
     },
   },
+
+  findDepartment: {
+    description: 'Find a department by ID',
+    tags: ['Department'],
+    params: {
+      type: 'object',
+      required: ['departmentId'],
+      properties: {
+        departmentId: { type: 'string', description: 'The unique identifier of the department' },
+      },
+    },
+    response: {
+      200: {
+        type: 'object',
+        properties: {
+          id: { type: 'string', description: 'The unique identifier of the department' },
+          name: { type: 'string', description: 'The name of the department' },
+          description: { type: 'string', description: 'A description of the department' },
+          createdAt: { type: 'string', format: 'date-time', description: 'The date the department was created' },
+          updatedAt: { type: 'string', format: 'date-time', description: 'The date the department was last updated' },
+        },
+      },
+      404: {
+        type: 'object',
+        properties: {
+          message: { type: 'string' },
+        },
+      },
+    },
+  },  
 };
+
+

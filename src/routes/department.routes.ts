@@ -106,4 +106,28 @@ export async function departmentRoutes(fastify: FastifyInstance) {
       return reply.code(statusCode).send({ message });
     }
   });
+
+  fastify.get<{ Params: { departmentId: string } }>('/departments/:departmentId', {
+    schema: {
+      security: [
+        { bearerAuth: [] } 
+      ],
+      ...DepartmentSchemas.findDepartment,
+    },
+  }, async (req: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const { departmentId } = req.params as { departmentId: string };
+  
+      const department = await departmentUseCase.findByDepartment(departmentId);
+  
+      if (!department) {
+        return reply.code(404).send({ message: 'Department not found' });
+      }
+  
+      return reply.status(200).send(department);
+    } catch (error) {
+      const statusCode = (error instanceof Error && error.message.includes('Department not found')) ? 404 : 500;
+      return reply.code(statusCode).send({ message: error instanceof Error ? error.message : 'Internal Server Error' });
+    }
+  });  
 }

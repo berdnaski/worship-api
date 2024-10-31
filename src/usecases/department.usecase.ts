@@ -67,6 +67,16 @@ class DepartmentUseCase {
 
     await this.departmentRepository.delete(departmentId);
   }
+
+  async findByDepartment(departmentId: string): Promise<Department | null> {
+    const department = await this.departmentRepository.findById(departmentId);
+
+    if (!department) {
+      throw new Error("Department not found");
+    }
+
+    return department;
+  }
 }
 
 export { DepartmentUseCase };
