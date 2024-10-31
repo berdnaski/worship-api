@@ -139,7 +139,7 @@ export async function departmentRoutes(fastify: FastifyInstance) {
         { bearerAuth: [] } 
       ],
       description: 'Add a user to a department',
-      tags: ['Department'], // Isso assegura que a rota seja agrupada sob "Departments"
+      tags: ['Department'], 
       params: {
         type: 'object',
         properties: {
