@@ -1,5 +1,5 @@
 import { prisma } from "../database/prisma-client";
-import type { Department, DepartmentCreate, DepartmentRepository, DepartmentUpdate } from "../interfaces/department.interface";
+import type { Department, DepartmentCreate, DepartmentRepository, DepartmentResponse, DepartmentUpdate } from "../interfaces/department.interface";
 
 class DepartmentRepositoryPrisma implements DepartmentRepository {
   async create(data: DepartmentCreate): Promise<Department> {
@@ -21,6 +21,18 @@ class DepartmentRepositoryPrisma implements DepartmentRepository {
         id,
       }
     })
+  }
+
+  async findAll(): Promise<DepartmentResponse[]> {
+    return await prisma.department.findMany();
+  }
+
+  async delete(departmentId: string): Promise<void> {
+    await prisma.department.delete({
+      where: {
+        id: departmentId,
+      }
+    });
   }
 }
 

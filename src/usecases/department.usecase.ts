@@ -41,6 +41,32 @@ class DepartmentUseCase {
 
     return update;
   }
+
+  async findAll(): Promise<DepartmentResponse[]> {
+    const departments = await this.departmentRepository.findAll();
+
+    return departments.map(department => ({
+      id: department.id,
+      name: department.name,
+      description: department.description,
+      createdAt: department.createdAt,
+      updatedAt: department.updatedAt,
+    }));
+  }
+
+  async delete(departmentId: string, requesterId: string, requesterRole: 'ADMIN' | 'LEADER'): Promise<void> {
+    const departmentToDelete = await this.departmentRepository.findById(departmentId);
+
+    if (!departmentToDelete) {
+        throw new Error("Department not found");
+    }
+
+    if (requesterRole !== "ADMIN" && requesterRole !== "LEADER" && requesterId !== departmentId) {
+        throw new Error("Permission denied");
+    }
+
+    await this.departmentRepository.delete(departmentId);
+  }
 }
 
 export { DepartmentUseCase };

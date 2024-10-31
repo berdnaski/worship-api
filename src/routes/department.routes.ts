@@ -5,8 +5,7 @@ import type { DepartmentCreate, DepartmentUpdate } from "../interfaces/departmen
 import { verifyJWT } from "../middlewares/verify-jwt";
 
 export async function departmentRoutes(fastify: FastifyInstance) {
-  
-  // Hook para verificar JWT em todas as rotas, exceto as de registro e login
+
   fastify.addHook("onRequest", async (req, reply) => {
     if (req.url === "/register" || req.url === "/login" || req.url === "/setup") return;
     await verifyJWT(req, reply);
@@ -14,11 +13,10 @@ export async function departmentRoutes(fastify: FastifyInstance) {
 
   const departmentUseCase = new DepartmentUseCase(); 
 
-  // Endpoint para criar um novo departamento
   fastify.post<{ Body: DepartmentCreate }>('/departments', {
     schema: {
       security: [
-        { bearerAuth: [] } // Adiciona segurança para o endpoint
+        { bearerAuth: [] } 
       ],
       ...DepartmentSchemas.createDepartment,
     },
@@ -41,13 +39,12 @@ export async function departmentRoutes(fastify: FastifyInstance) {
     }
   });
 
-  // Endpoint para atualizar um departamento existente
   fastify.put<{ Params: { id: string }, Body: DepartmentUpdate }>('/departments/:id', {
     schema: {
       security: [
         { bearerAuth: [] } 
       ],
-      ...DepartmentSchemas.updateDepartment, // Utilize o spread para incluir todos os detalhes
+      ...DepartmentSchemas.updateDepartment, 
     },
   }, async (req: FastifyRequest, reply: FastifyReply) => {
     try {
@@ -63,6 +60,50 @@ export async function departmentRoutes(fastify: FastifyInstance) {
       return reply.status(200).send(updatedDepartment);
     } catch (error) {
       return reply.code(500).send({ message: 'Internal Server Error' });
+    }
+  });
+
+  fastify.get('/departments', {
+    schema: {
+      security: [
+        { bearerAuth: [] }
+      ],
+      ...DepartmentSchemas.listDepartments,
+    },
+  }, async (req: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const departments = await departmentUseCase.findAll();
+      return reply.status(200).send(departments);
+    } catch (error) {
+      return reply.code(500).send({ message: 'Internal Server Error' });
+    }
+  });
+
+  fastify.delete('/departments/:departmentId', {
+    schema: {
+      security: [
+        { bearerAuth: [] }
+      ],
+      ...DepartmentSchemas.deleteDepartment,
+    },
+  }, async (req: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const { departmentId } = req.params as { departmentId: string };
+      const requesterRole = req.user.role; 
+      const requesterId = req.user.sub; 
+  
+      if (requesterRole !== "ADMIN" && requesterRole !== "LEADER") {
+        return reply.code(403).send({ message: "Permission denied" });
+      }
+  
+      await departmentUseCase.delete(departmentId, requesterId, requesterRole);
+  
+      return reply.code(204).send(); 
+    } catch (error) {
+      const statusCode = (error instanceof Error && error.message.includes('Permission denied')) ? 403 : 500;
+      const message = error instanceof Error ? error.message : 'Internal Server Error';
+  
+      return reply.code(statusCode).send({ message });
     }
   });
 }

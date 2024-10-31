@@ -33,4 +33,6 @@ export interface DepartmentRepository {
   create(data: DepartmentCreate): Promise<Department>;
   update(id: string, data: DepartmentUpdate): Promise<Department | null>
   findById(id: string): Promise<Department | null>
+  findAll(): Promise<DepartmentResponse[]>
+  delete(departmentId: string): Promise<void>
 }
