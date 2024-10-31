@@ -1,7 +1,7 @@
 export const SongSchemas = {
   createSongSchema: {
     description: 'Create a new song',
-    tags: ['Song'], // Aqui está a tag para o grupo
+    tags: ['Song'], 
     body: {
       type: 'object',
       required: ['title', 'artist'],
@@ -126,7 +126,7 @@ export const SongSchemas = {
       },
     },
   },
-  
+
   updateSongSchema: {
     description: 'Update a song by ID',
     tags: ['Song'],

@@ -22,8 +22,8 @@ export interface CreateSongData {
 }
 
 export interface UpdateSong {
-  title: string;
-  artist: string;
+  title?: string;
+  artist?: string;
   genre?: string | null;
 }
 

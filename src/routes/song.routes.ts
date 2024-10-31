@@ -1,4 +1,3 @@
-// src/routes/song.routes.ts
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { SongUseCase } from "../usecases/song.usecase";
 import { verifyJWT } from "../middlewares/verify-jwt";

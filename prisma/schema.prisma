@@ -92,15 +92,15 @@ model Song {
 }
 
 model SongVersion {
-  id          String   @id @default(uuid())
-  versionName String
-  songId      String
-  rating      Int
-  key         String
-  linkChord   String?
-  linkVideo   String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             String   @id @default(uuid())
+  versionName    String
+  songId         String
+  classification String
+  key            String
+  linkChord      String?
+  linkVideo      String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   song Song @relation(fields: [songId], references: [id])
 

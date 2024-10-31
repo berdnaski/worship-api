@@ -7,6 +7,7 @@ import { departmentRoutes } from "./routes/department.routes";
 import { schedulesRoutes } from "./routes/schedules.routes";
 import { scheduleParticipantRoutes } from "./routes/schedule.participant.routes";
 import { songRoutes } from "./routes/song.routes";
+import { songVersionRoutes } from "./routes/song.version.routes";
 
 const app: FastifyInstance = fastify();
 
@@ -54,6 +55,10 @@ app.register(scheduleParticipantRoutes, {
 })
 
 app.register(songRoutes, {
+  prefix: "/"
+})
+
+app.register(songVersionRoutes, {
   prefix: "/"
 })
 

@@ -18,8 +18,8 @@ export interface ScheduleResponse {
 }
 
 export interface ScheduleUpdate {
-  name: string;
-  date: Date;
+  name?: string;
+  date?: Date;
 }
 
 export interface SchedulesRepository {
