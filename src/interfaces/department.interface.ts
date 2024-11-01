@@ -11,11 +11,6 @@ export interface DepartmentCreate {
   description?: string | null; 
 }
 
-export interface DepartmentUpdate {
-  name?: string;
-  description?: string | null; 
-}
-
 export interface DepartmentResponse {
   id: string;
   name: string;

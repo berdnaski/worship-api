@@ -44,7 +44,7 @@ class DepartmentUseCase {
 
   async findAll(): Promise<DepartmentResponse[]> {
     const departments = await this.departmentRepository.findAll();
-
+  
     return departments.map(department => ({
       id: department.id,
       name: department.name,

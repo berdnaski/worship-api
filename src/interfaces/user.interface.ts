@@ -4,6 +4,7 @@ export interface User {
   name: string;
   passwordHash: string;
   role: 'ADMIN' | 'LEADER' | 'MEMBER';
+  avatarUrl?: string | null; 
   initialSetupCompleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -16,20 +17,17 @@ export interface UserCreate {
   passwordHash: string;
   role?: "ADMIN" | "LEADER" | "MEMBER"; 
   departmentId?: string;
+  avatarUrl?: string | null; 
 }
 
 export interface UserResponse {
   id: string;
   email: string;
   name: string;
+  avatarUrl?: string | null; 
   role: 'ADMIN' | 'LEADER' | 'MEMBER';
   createdAt: Date;
   updatedAt: Date;
-}
-
-export interface UserLogin {
-  email: string;
-  password: string;
 }
 
 export interface UserUpdate {
@@ -38,6 +36,12 @@ export interface UserUpdate {
   role?: "ADMIN" | "LEADER" | "MEMBER";
   departmentId?: string;
   initialSetupCompleted?: boolean;
+  avatarUrl?: string | null; 
+}
+
+export interface UserLogin {
+  email: string;
+  password: string;
 }
 
 export interface UserRepository {
@@ -48,4 +52,5 @@ export interface UserRepository {
   findAll(): Promise<UserResponse[]>;
   delete(id: string): Promise<void>;
   addUserToDepartment(id: string, departmentId: string): Promise<void>
+  findUsersByDepartment(departmentId: string): Promise<User[]>
 }

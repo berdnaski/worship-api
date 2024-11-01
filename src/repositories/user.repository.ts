@@ -11,8 +11,9 @@ class UserRepositoryPrisma implements UserRepository {
         email: data.email,
         name: data.name,
         passwordHash: hashedPassword,
-        role: data.role || "MEMBER", 
-        departmentId: data.departmentId
+        role: data.role || "MEMBER",
+        departmentId: data.departmentId,
+        avatarUrl: data.avatarUrl 
       },
     });
 
@@ -44,6 +45,7 @@ class UserRepositoryPrisma implements UserRepository {
       where: { id },
       data: {
         ...data,
+        avatarUrl: data.avatarUrl, 
       },
     });
 
@@ -73,6 +75,13 @@ class UserRepositoryPrisma implements UserRepository {
     });
   }
   
+  async findUsersByDepartment(departmentId: string): Promise<User[]> {
+    return prisma.user.findMany({
+      where: {
+        departmentId: departmentId,
+      },
+    });
+  }
 }
 
 export { UserRepositoryPrisma };

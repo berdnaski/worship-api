@@ -19,14 +19,14 @@ model User {
   email                 String   @unique
   passwordHash          String
   role                  Role     @default(MEMBER)
+  avatarUrl             String?
   initialSetupCompleted Boolean  @default(false)
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
-  department   Department? @relation(fields: [departmentId], references: [id])
+  department   Department?           @relation(fields: [departmentId], references: [id], onDelete: SetNull)
   departmentId String?
-
-  schedules ScheduleParticipant[]
+  schedules    ScheduleParticipant[]
 
   @@map("users")
 }

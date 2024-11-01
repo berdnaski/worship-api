@@ -5,6 +5,7 @@ export const userCreateSchema = {
     email: { type: 'string', format: 'email' },
     passwordHash: { type: 'string' },
     departmentId: { type: 'string', nullable: true },
+    avatarUrl: { type: 'string', nullable: true }, 
     role: { type: 'string', enum: ['ADMIN', 'LEADER', 'MEMBER'], default: 'MEMBER' }
   },
   required: ['name', 'email', 'passwordHash']
@@ -70,6 +71,7 @@ export const userUpdateSchema = {
     email: { type: 'string', format: 'email' },
     passwordHash: { type: 'string' },
     departmentId: { type: 'string', nullable: true },
+    avatarUrl: { type: 'string', nullable: true }, 
     role: {
       type: 'string',
       enum: ['ADMIN', 'LEADER', 'MEMBER'],

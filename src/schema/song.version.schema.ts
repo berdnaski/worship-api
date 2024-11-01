@@ -1,10 +1,10 @@
 export const SongVersionSchemas = {
   createSongVersionSchema: {
     description: 'Create a new song version',
-    tags: ['SongVersion'], // Atribuindo à tag correta
+    tags: ['SongVersion'], 
     body: {
       type: 'object',
-      required: ['versionName', 'classification', 'key'], // Removido songId
+      required: ['versionName', 'classification', 'key'], 
       properties: {
         versionName: { type: 'string', description: 'Name of the song version' },
         classification: { type: 'string', description: 'Classification of the song version' },
@@ -20,7 +20,7 @@ export const SongVersionSchemas = {
         properties: {
           id: { type: 'string', description: 'The unique identifier of the song version' },
           versionName: { type: 'string', description: 'Name of the song version' },
-          songId: { type: 'string', description: 'ID of the song this version belongs to' }, // Certifique-se de que isso ainda está correto
+          songId: { type: 'string', description: 'ID of the song this version belongs to' }, 
           classification: { type: 'string', description: 'Classification of the song version' },
           key: { type: 'string', description: 'Key of the song version' },
           linkChord: { type: 'string', nullable: true, description: 'Link to chords' },

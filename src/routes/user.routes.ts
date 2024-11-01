@@ -15,7 +15,7 @@ export async function userRoutes(fastify: FastifyInstance) {
   const userUseCase = new UserUseCase(fastify);
 
   fastify.addHook("onRequest", async (req, reply) => {
-    if (req.url === "/register" || req.url === "/login" || req.url === "/setup") return;
+    if (req.url === "/register" || req.url === "/login" || req.url === "/setup" || req.url === "/dashboard") return;
     await verifyJWT(req, reply);
   });
 
@@ -94,19 +94,18 @@ export async function userRoutes(fastify: FastifyInstance) {
       }
     }
   }, async (req: FastifyRequest<{ Body: UserLogin }>, reply: FastifyReply) => {
-    const { email, password } = req.body;
-
+    const { email, password } = req.body as UserLogin; 
     try {
       const { user, token } = await userUseCase.login({
         email,
         password
       });
-
+  
       return reply.send({ user, token });
     } catch (error) {
       reply.code(401).send();
     }
-  });
+  });  
 
   fastify.post<{ Body: { userId: string; role: 'ADMIN' | 'LEADER' | 'MEMBER'; code?: string } }>("/setup", {
     schema: {

@@ -12,7 +12,12 @@ import cors from "@fastify/cors";
 
 const app: FastifyInstance = fastify();
 
-app.register(cors);
+app.register(cors, {
+  origin: 'http://localhost:5173', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Custom-Header'],
+  credentials: true,
+});
 
 app.register(jwt, {
   secret: "worshipkey-987654321"

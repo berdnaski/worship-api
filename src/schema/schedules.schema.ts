@@ -40,7 +40,7 @@ export const ScheduleSchemas = {
     },
   },
   
-  // Novo Schema para Listar Escalas
+  
   listSchemas: {
     description: 'List all schedules for a specific department',
     tags: ['Schedule'],

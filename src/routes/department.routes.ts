@@ -73,7 +73,7 @@ export async function departmentRoutes(fastify: FastifyInstance) {
     },
   }, async (req: FastifyRequest, reply: FastifyReply) => {
     try {
-      const departments = await departmentUseCase.findAll();
+      const departments = await departmentUseCase.findAll(); 
       return reply.status(200).send(departments);
     } catch (error) {
       return reply.code(500).send({ message: 'Internal Server Error' });

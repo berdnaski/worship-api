@@ -20,7 +20,6 @@ class ScheduleParticipantUseCase {
     if (existingParticipant) {
       throw new Error('Participant already exists in this schedule');
     }
-
     return await this.repository.create(data);
   }
 
