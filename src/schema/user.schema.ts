@@ -1,4 +1,3 @@
-// user.schemas.ts
 export const userCreateSchema = {
   type: 'object',
   properties: {

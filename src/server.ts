@@ -8,8 +8,11 @@ import { schedulesRoutes } from "./routes/schedules.routes";
 import { scheduleParticipantRoutes } from "./routes/schedule.participant.routes";
 import { songRoutes } from "./routes/song.routes";
 import { songVersionRoutes } from "./routes/song.version.routes";
+import cors from "@fastify/cors";
 
 const app: FastifyInstance = fastify();
+
+app.register(cors);
 
 app.register(jwt, {
   secret: "worshipkey-987654321"
