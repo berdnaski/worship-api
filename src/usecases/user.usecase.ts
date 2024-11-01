@@ -109,6 +109,7 @@ class UserUseCase {
       email: user.email,
       name: user.name,
       role: user.role,
+      initialSetupCompleted: user.initialSetupCompleted,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     }));

@@ -28,7 +28,9 @@ export interface UserResponse {
   role: 'ADMIN' | 'LEADER' | 'MEMBER';
   createdAt: Date;
   updatedAt: Date;
+  initialSetupCompleted: boolean; 
 }
+
 
 export interface UserUpdate {
   name?: string;
@@ -52,5 +54,4 @@ export interface UserRepository {
   findAll(): Promise<UserResponse[]>;
   delete(id: string): Promise<void>;
   addUserToDepartment(id: string, departmentId: string): Promise<void>
-  findUsersByDepartment(departmentId: string): Promise<User[]>
 }

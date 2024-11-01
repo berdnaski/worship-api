@@ -10,13 +10,17 @@ import {
   userResponseSchema,
   userUpdateSchema
 } from "../../src/schema/user.schema"; 
+import { checkInitialSetup } from "../middlewares/check.initial.setup";
 
 export async function userRoutes(fastify: FastifyInstance) {
   const userUseCase = new UserUseCase(fastify);
 
+  
   fastify.addHook("onRequest", async (req, reply) => {
-    if (req.url === "/register" || req.url === "/login" || req.url === "/setup" || req.url === "/dashboard") return;
-    await verifyJWT(req, reply);
+    const excludedPaths = ["/login", "/register", "/setup"];
+    if (!excludedPaths.includes(req.url || '')) {
+      await verifyJWT(req, reply);
+    }
   });
 
   fastify.post<{ Body: UserCreate }>("/register", {
@@ -144,7 +148,8 @@ export async function userRoutes(fastify: FastifyInstance) {
         200: userListResponseSchema,
         401: { type: 'object', properties: { message: { type: 'string' } } }
       },
-    }
+    },
+    preHandler: await checkInitialSetup(userUseCase), 
   }, async (req: FastifyRequest, reply: FastifyReply) => {
     try {
       const users = await userUseCase.findAll();
@@ -171,7 +176,8 @@ export async function userRoutes(fastify: FastifyInstance) {
         200: userResponseSchema,
         404: { type: 'object', properties: { message: { type: 'string' } } },
       }
-    }
+    },
+    preHandler: await checkInitialSetup(userUseCase), 
   }, async (req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
     const { id } = req.params; 
   
@@ -202,7 +208,11 @@ export async function userRoutes(fastify: FastifyInstance) {
         200: userResponseSchema, 
         404: { type: 'object', properties: { message: { type: 'string' } } },
       },
+      security: [
+        { bearerAuth: [] }
+      ],
     },
+    preHandler: await checkInitialSetup(userUseCase), 
   }, async (req: FastifyRequest<{ Params: { id: string }, Body: UserUpdate }>, reply: FastifyReply) => {
     const { id } = req.params;
     const userUpdates = req.body;
@@ -232,7 +242,8 @@ export async function userRoutes(fastify: FastifyInstance) {
         403: { type: 'object', properties: { message: { type: 'string' } } },
         404: { type: 'object', properties: { message: { type: 'string' } } }
       }
-    }
+    },
+    preHandler: await checkInitialSetup(userUseCase), 
   }, async (req: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
     const { id } = req.params;
     const requesterId = req.user.sub; 
@@ -240,16 +251,16 @@ export async function userRoutes(fastify: FastifyInstance) {
   
     try {
       await userUseCase.delete(id, requesterId, requesterRole);
-      return reply.status(200).send("User deleted successfully");
+      reply.send('User deleted successfully');
     } catch (error) {
-      const message = (error as Error).message || 'An unexpected error occurred';
-      if (message === "Permission denied") {
-        return reply.status(403).send({ message });
+      const message = (error as Error).message; 
+      if (message === 'User not found') {
+        return reply.code(404).send({ message });
       }
-      if (message === "User not found") {
-        return reply.status(404).send({ message });
+      if (message === 'You cannot delete yourself') {
+        return reply.code(403).send({ message });
       }
-      return reply.status(500).send({ message: 'Internal server error' });
+      reply.code(500).send({ message });
     }
   });
 }
