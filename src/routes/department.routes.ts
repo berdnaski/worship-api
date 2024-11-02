@@ -110,15 +110,12 @@ export async function departmentRoutes(fastify: FastifyInstance) {
 
   fastify.get<{ Params: { departmentId: string } }>('/departments/:departmentId', {
     schema: {
-      security: [
-        { bearerAuth: [] } 
-      ],
+      security: [{ bearerAuth: [] }],
       ...DepartmentSchemas.findDepartment,
     },
-  }, async (req: FastifyRequest, reply: FastifyReply) => {
+  }, async (req: FastifyRequest<{ Params: { departmentId: string } }>, reply: FastifyReply) => {
     try {
-      const { departmentId } = req.params as { departmentId: string };
-  
+      const { departmentId } = req.params;  
       const department = await departmentUseCase.findByDepartment(departmentId);
   
       if (!department) {
@@ -127,10 +124,11 @@ export async function departmentRoutes(fastify: FastifyInstance) {
   
       return reply.status(200).send(department);
     } catch (error) {
-      const statusCode = (error instanceof Error && error.message.includes('Department not found')) ? 404 : 500;
-      return reply.code(statusCode).send({ message: error instanceof Error ? error.message : 'Internal Server Error' });
+      const statusCode = error instanceof Error && error.message.includes('Department not found') ? 404 : 500;
+      const message = error instanceof Error ? error.message : 'Internal Server Error';
+      return reply.code(statusCode).send({ message });
     }
-  });  
+  });
 
   fastify.post('/departments/:departmentId/users/:id', { 
     preHandler: verifyUserRole('ADMIN', 'LEADER'), 

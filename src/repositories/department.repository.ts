@@ -31,18 +31,17 @@ class DepartmentRepositoryPrisma implements DepartmentRepository {
         id,
       },
       include: {
-        users: true, 
+        users: true, // Inclui usuários associados ao departamento
       },
     });
-  
+    
     if (!department) {
       return null; 
     }
-
-    return department;
+  
+    return department; // Aqui, o departamento retornará com a propriedade 'users'
   }
   
-
   async findAll(): Promise<DepartmentResponse[]> {
     const departments = await prisma.department.findMany({
       include: {

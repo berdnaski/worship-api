@@ -46,13 +46,21 @@ class DepartmentUseCase {
     const departments = await this.departmentRepository.findAll();
   
     return departments.map(department => ({
-      id: department.id,
-      name: department.name,
-      description: department.description,
-      createdAt: department.createdAt,
-      updatedAt: department.updatedAt,
+      ...department,
+      users: department.users ?? [], 
     }));
   }
+
+  async findByDepartment(departmentId: string): Promise<DepartmentResponse | null> {
+    const department = await this.departmentRepository.findById(departmentId);
+  
+    if (!department) {
+      throw new Error("Department not found");
+    }
+  
+    return department as DepartmentResponse; 
+  }
+  
 
   async delete(departmentId: string, requesterId: string, requesterRole: 'ADMIN' | 'LEADER'): Promise<void> {
     const departmentToDelete = await this.departmentRepository.findById(departmentId);
@@ -66,16 +74,6 @@ class DepartmentUseCase {
     }
 
     await this.departmentRepository.delete(departmentId);
-  }
-
-  async findByDepartment(departmentId: string): Promise<Department | null> {
-    const department = await this.departmentRepository.findById(departmentId);
-
-    if (!department) {
-      throw new Error("Department not found");
-    }
-
-    return department;
   }
 
   async addUserToDepartment(departmentId: string, id: string): Promise<void> {

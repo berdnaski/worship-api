@@ -74,14 +74,7 @@ class UserRepositoryPrisma implements UserRepository {
       },
     });
   }
-  
-  async findUsersByDepartment(departmentId: string): Promise<User[]> {
-    return prisma.user.findMany({
-      where: {
-        departmentId: departmentId,
-      },
-    });
-  }
+
 }
 
 export { UserRepositoryPrisma };
