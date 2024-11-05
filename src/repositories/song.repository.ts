@@ -25,12 +25,18 @@ class SongRepositoryPrisma implements SongRepository {
   }
 
   async delete(id: string): Promise<void> {
-    await prisma.song.delete({
-      where: {
-        id,
-      },
+    await prisma.songVersion.deleteMany({
+        where: {
+            songId: id,
+        },
     });
-  }
+    
+    await prisma.song.delete({
+        where: {
+            id,
+        },
+    });
+}
 
   async update(id: string, data: UpdateSong): Promise<Song | null> {
     return await prisma.song.update({

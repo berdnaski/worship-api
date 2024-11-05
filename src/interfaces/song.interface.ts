@@ -8,6 +8,7 @@ export interface Song {
 }
 
 export interface SongResponse {
+  id: string;
   title: string;
   artist: string;
   genre?: string | null;

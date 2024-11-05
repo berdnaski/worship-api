@@ -66,19 +66,22 @@ export async function departmentRoutes(fastify: FastifyInstance) {
 
   fastify.get('/departments', {
     schema: {
-      security: [
-        { bearerAuth: [] }
-      ],
+      security: [{ bearerAuth: [] }],
       ...DepartmentSchemas.listDepartments,
     },
   }, async (req: FastifyRequest, reply: FastifyReply) => {
     try {
-      const departments = await departmentUseCase.findAll(); 
+      const userId = req.user.sub; // ID do usuário autenticado
+      const userRole = req.user.role; // Papel do usuário
+  
+      const departments = await departmentUseCase.findAll(userId, userRole);
+  
       return reply.status(200).send(departments);
     } catch (error) {
       return reply.code(500).send({ message: 'Internal Server Error' });
     }
   });
+  
 
   fastify.delete('/departments/:departmentId', {
     schema: {

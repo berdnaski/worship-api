@@ -175,7 +175,7 @@ export const DepartmentSchemas = {
           description: { type: 'string', description: 'A description of the department' },
           createdAt: { type: 'string', format: 'date-time', description: 'The date the department was created' },
           updatedAt: { type: 'string', format: 'date-time', description: 'The date the department was last updated' },
-          users: { // Adicionando a propriedade users
+          users: { 
             type: 'array',
             items: {
               type: 'object',
@@ -184,6 +184,7 @@ export const DepartmentSchemas = {
                 name: { type: 'string', description: 'The name of the user' },
                 email: { type: 'string', description: 'The email of the user' },
                 role: { type: 'string', description: 'The role of the user in the department' },
+                avatarUrl: { type: 'string', description: 'The avatar URL of the user' },
               },
             },
           },
@@ -197,6 +198,7 @@ export const DepartmentSchemas = {
       },
     },
   },
+
 
   
   addUserToDepartment: {

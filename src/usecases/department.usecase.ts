@@ -42,13 +42,15 @@ class DepartmentUseCase {
     return update;
   }
 
-  async findAll(): Promise<DepartmentResponse[]> {
-    const departments = await this.departmentRepository.findAll();
-  
-    return departments.map(department => ({
-      ...department,
-      users: department.users ?? [], 
-    }));
+  async findAll(userId: string, userRole: 'ADMIN' | 'LEADER' | 'MEMBER'): Promise<DepartmentResponse[]> {
+    if (userRole === 'ADMIN' || userRole === 'LEADER') {
+      
+      return await this.departmentRepository.findAll();
+    } else if (userRole === 'MEMBER') {
+      
+      return await this.userRepository.findDepartmentsByUserId(userId);
+    }
+    throw new Error("Permission denied");
   }
 
   async findByDepartment(departmentId: string): Promise<DepartmentResponse | null> {
@@ -78,7 +80,7 @@ class DepartmentUseCase {
 
   async addUserToDepartment(departmentId: string, id: string): Promise<void> {
     await this.departmentRepository.addUser(departmentId, id);
-}
+  }
   
   async removeUserFromDepartment(departmentId: string, id: string): Promise<void> {
     await this.departmentRepository.removeUser(departmentId, id);

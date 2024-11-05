@@ -22,6 +22,7 @@ class SongUseCase {
     const songs = await this.songRepository.findAll();
 
     return songs.map(song => ({
+      id: song.id,
       title: song.title,
       artist: song.artist,
       genre: song.genre,

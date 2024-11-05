@@ -31,7 +31,7 @@ class DepartmentRepositoryPrisma implements DepartmentRepository {
         id,
       },
       include: {
-        users: true, // Inclui usuários associados ao departamento
+        users: true,
       },
     });
     
@@ -39,7 +39,7 @@ class DepartmentRepositoryPrisma implements DepartmentRepository {
       return null; 
     }
   
-    return department; // Aqui, o departamento retornará com a propriedade 'users'
+    return department; 
   }
   
   async findAll(): Promise<DepartmentResponse[]> {

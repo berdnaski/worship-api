@@ -45,8 +45,9 @@ export interface SongVersionResponse {
 
 export interface SongVersionRepository {
   create(data: SongVersionCreate, songId: string): Promise<SongVersion>
-  findAll(): Promise<SongVersionResponse[]>;
-  findById(id: string): Promise<SongVersion | null>;
+  findAll(songId: string): Promise<SongVersionResponse[]>
+  findById(songId: string, songVersionId: string): Promise<SongVersion | null>
   delete(id: string): Promise<void>;
   update(id: string, data: SongVersionUpdate): Promise<SongVersion | null>;
+  findBySongId(songId: string): Promise<SongVersionResponse[]>
 }

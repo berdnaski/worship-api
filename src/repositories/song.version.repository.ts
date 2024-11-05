@@ -13,19 +13,27 @@ class SongVersionRepositoryPrisma implements SongVersionRepository {
     return songVersion;
   }
 
-  async findAll(): Promise<SongVersionResponse[]> {
-    return await prisma.songVersion.findMany();
-  }
-
-  async findById(id: string): Promise<SongVersion | null> {
-    const songVersion = await prisma.songVersion.findUnique({
+  async findAll(songId: string): Promise<SongVersionResponse[]> {
+    return await prisma.songVersion.findMany({
       where: {
-        id,
+        songId: songId,
+      },
+    });
+  }
+  
+
+  async findById(songId: string, songVersionId: string): Promise<SongVersion | null> {
+    const songVersion = await prisma.songVersion.findFirst({
+      where: {
+        id: songVersionId,
+        songId: songId,
       }
     });
-    
+  
     return songVersion;
   }
+  
+  
 
   async delete(id: string): Promise<void> {
     await prisma.songVersion.delete({
@@ -45,6 +53,15 @@ class SongVersionRepositoryPrisma implements SongVersionRepository {
 
     return songVersion;
   }
+
+  async findBySongId(songId: string): Promise<SongVersionResponse[]> {
+    return await prisma.songVersion.findMany({
+      where: {
+        songId: songId, 
+      },
+    });
+  }
+  
 }
 
 export { SongVersionRepositoryPrisma };

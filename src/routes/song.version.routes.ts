@@ -37,22 +37,29 @@ export async function songVersionRoutes(fastify: FastifyInstance) {
     }
   });
 
-  fastify.get('/songs/:songId/song-versions', {
-    schema: {
-      security: [{
-        bearerAuth: [],
-      }],
-      ...SongVersionSchemas.listSongVersionsSchema,
-    },
-  }, async (req: FastifyRequest, reply: FastifyReply) => {
-    try {
-      const songVersions = await songVersionUseCase.findAll();
+  interface SongParams {
+    songId: string; 
+  }
 
-      return reply.status(200).send(songVersions);
-    } catch (error) {
-      return reply.code(500).send({ message: 'Internal Server Error' });
-    }
-  });
+    fastify.get('/songs/:songId/song-versions', {
+      schema: {
+        security: [{
+          bearerAuth: [],
+        }],
+        ...SongVersionSchemas.listSongVersionsSchema,
+      },
+    }, async (req: FastifyRequest<{ Params: SongParams }>, reply: FastifyReply) => {
+      try {
+        const { songId } = req.params; 
+        const songVersions = await songVersionUseCase.findAll(songId); 
+    
+        return reply.status(200).send(songVersions);
+      } catch (error) {
+        console.error(error); 
+        return reply.code(500).send({ message: 'Internal Server Error' });
+      }
+    });
+    
 
   fastify.get<{ Params: { songId: string; songVersionId: string } }>('/songs/:songId/song-versions/:songVersionId', {
     schema: {
@@ -61,11 +68,11 @@ export async function songVersionRoutes(fastify: FastifyInstance) {
       }],
       ...SongVersionSchemas.getSongVersionSchema,
     },
-  }, async (req: FastifyRequest, reply: FastifyReply) => {
+  }, async (req: FastifyRequest<{ Params: { songId: string; songVersionId: string } }>, reply: FastifyReply) => {
     try {
-      const { songVersionId } = req.params as { songVersionId: string }; 
+      const { songId, songVersionId } = req.params;
   
-      const songVersion = await songVersionUseCase.findById(songVersionId); 
+      const songVersion = await songVersionUseCase.findById(songId, songVersionId); 
   
       if (!songVersion) {
         return reply.code(404).send({ message: 'Song version not found' });
@@ -76,6 +83,8 @@ export async function songVersionRoutes(fastify: FastifyInstance) {
       return reply.code(500).send({ message: 'Internal Server Error' });
     }
   });
+  
+  
 
   fastify.delete<{ Params: { songId: string; songVersionId: string } }>('/songs/:songId/song-versions/:songVersionId', {
     schema: {
@@ -85,16 +94,17 @@ export async function songVersionRoutes(fastify: FastifyInstance) {
       ...SongVersionSchemas.deleteSongVersionSchema,
     },
   }, async (req: FastifyRequest, reply: FastifyReply) => {
-    const { songVersionId } = req.params as { songVersionId: string };
+    const { songId, songVersionId } = req.params as { songId: string; songVersionId: string };
     
     try {
-      await songVersionUseCase.delete(songVersionId);
-
+      await songVersionUseCase.delete(songId, songVersionId);
+  
       return reply.status(204).send(); 
     } catch (error) {
       return reply.code(500).send({ message: 'Internal Server Error' });
     }
   });
+  
   
   fastify.put<{ Params: { songId: string; songVersionId: string }, Body: SongVersionUpdate }>('/songs/:songId/song-versions/:songVersionId', {
     schema: {
@@ -104,15 +114,17 @@ export async function songVersionRoutes(fastify: FastifyInstance) {
       ...SongVersionSchemas.updateSongVersionSchema, 
     },
   }, async (req: FastifyRequest<{ Params: { songId: string; songVersionId: string }, Body: SongVersionUpdate }>, reply: FastifyReply) => {
-    const { songVersionId } = req.params as { songVersionId: string };
+    const { songId, songVersionId } = req.params as { songId: string; songVersionId: string }; 
     const data = req.body;
     
     try {
-      const updatedSongVersion = await songVersionUseCase.update(songVersionId, data);
+      const updatedSongVersion = await songVersionUseCase.update(songId, songVersionId, data); 
+  
       return reply.status(200).send(updatedSongVersion);
     } catch (error) {
       return reply.code(500).send({ message: 'Internal Server Error' });
     }
   });
+  
   
 }

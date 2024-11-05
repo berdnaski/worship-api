@@ -1,3 +1,6 @@
+import type { Department } from "@prisma/client";
+import type { DepartmentResponse } from "./department.interface";
+
 export interface User {
   id: string;
   email: string;
@@ -54,4 +57,5 @@ export interface UserRepository {
   findAll(): Promise<UserResponse[]>;
   delete(id: string): Promise<void>;
   addUserToDepartment(id: string, departmentId: string): Promise<void>
+  findDepartmentsByUserId(userId: string): Promise<DepartmentResponse[]>
 }

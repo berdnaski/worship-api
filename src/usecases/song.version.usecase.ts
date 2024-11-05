@@ -25,30 +25,26 @@ class SongVersionUseCase {
     return songVersion;
   }
 
-  async findAll(): Promise<SongVersionResponse[]> {
-    const songVersions = await this.songVersionRepository.findAll();
-
+  async findAll(songId: string): Promise<SongVersionResponse[]> {
+    const songVersions = await this.songVersionRepository.findBySongId(songId); 
+  
     return songVersions.map(songVersion => ({
       versionName: songVersion.versionName,
       classification: songVersion.classification,
       key: songVersion.key,
       linkChord: songVersion.linkChord,
-      linkVideo: songVersion.linkVideo
+      linkVideo: songVersion.linkVideo, 
     }));
   }
 
-  async findById(songVersionId: string): Promise<SongVersion | null> {
-    const songVersion = await this.songVersionRepository.findById(songVersionId);
+  async findById(songId: string, songVersionId: string): Promise<SongVersion | null> {
+    const songVersion = await this.songVersionRepository.findById(songId, songVersionId);
 
-    if (!songVersion) {
-        throw new Error("Song version not found");
-    }
+    return songVersion || null; 
+}
 
-    return songVersion;
-  }
-
-  async delete(songVersionId: string): Promise<void> {
-    const songVersionExists = await this.songVersionRepository.findById(songVersionId);
+  async delete(songId: string, songVersionId: string): Promise<void> {
+    const songVersionExists = await this.songVersionRepository.findById(songId, songVersionId);
 
     if (!songVersionExists) {
       throw new Error("Song version not found");
@@ -57,8 +53,8 @@ class SongVersionUseCase {
     await this.songVersionRepository.delete(songVersionId);
   }
 
-  async update(songVersionId: string, data: SongVersionUpdate): Promise<SongVersion | null> {
-    const songVersion = await this.songVersionRepository.findById(songVersionId);
+  async update(songId: string, songVersionId: string, data: SongVersionUpdate): Promise<SongVersion | null> {
+    const songVersion = await this.songVersionRepository.findById(songId, songVersionId);
 
     if (!songVersion) {
       throw new Error("Song version not found");

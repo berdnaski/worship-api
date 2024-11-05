@@ -1,6 +1,8 @@
 import type { User, UserCreate, UserRepository, UserResponse, UserUpdate } from "../interfaces/user.interface";
 import { prisma } from "../database/prisma-client";
 import bcrypt from "bcrypt";
+import type { Department } from "@prisma/client";
+import type { DepartmentResponse } from "../interfaces/department.interface";
 
 class UserRepositoryPrisma implements UserRepository {
   async create(data: UserCreate): Promise<User> {
@@ -75,6 +77,28 @@ class UserRepositoryPrisma implements UserRepository {
     });
   }
 
+  async findDepartmentsByUserId(userId: string): Promise<DepartmentResponse[]> {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        department: {
+          include: {
+            users: true, 
+          },
+        },
+      },
+    });
+  
+    
+    if (!user || !user.department) {
+      return []; 
+    }
+  
+    return [{
+      ...user.department,
+      users: user.department.users ?? [], 
+    }];
+  }
 }
 
 export { UserRepositoryPrisma };
