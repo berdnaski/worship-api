@@ -32,6 +32,7 @@ export interface UserResponse {
   createdAt: Date;
   updatedAt: Date;
   initialSetupCompleted: boolean; 
+  department?: string;
 }
 
 

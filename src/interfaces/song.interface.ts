@@ -3,6 +3,7 @@ export interface Song {
   title: string;
   artist: string;
   genre?: string | null; 
+  scheduleId?: string | null;  
   createdAt: Date;
   updatedAt: Date;
 }
@@ -12,6 +13,7 @@ export interface SongResponse {
   title: string;
   artist: string;
   genre?: string | null;
+  scheduleId?: string | null;
   createdAt: Date;
   updatedAt: Date;
 }

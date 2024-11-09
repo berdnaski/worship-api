@@ -37,8 +37,11 @@ class UserRepositoryPrisma implements UserRepository {
       where: {
         id,
       },
+      include: {
+        department: true,  
+      },
     });
-
+  
     return result || null;
   }
 

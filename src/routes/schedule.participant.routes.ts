@@ -14,8 +14,8 @@ export async function scheduleParticipantRoutes(fastify: FastifyInstance) {
 
   const scheduleParticipantUseCase = new ScheduleParticipantUseCase();
 
-  fastify.post<{ Body: ScheduleParticipantCreate; Params: { scheduleId: string } }>(
-    '/schedules/:scheduleId/participants',
+  fastify.post<{ Body: ScheduleParticipantCreate; Params: { departmentId: string; scheduleId: string } }>(
+    '/departments/:departmentId/schedules/:scheduleId/participants',
     {
       preHandler: verifyUserRole('ADMIN', 'LEADER'),
       schema: {
@@ -23,24 +23,28 @@ export async function scheduleParticipantRoutes(fastify: FastifyInstance) {
         ...ScheduleParticipantSchemas.addParticipant,
       },
     },
-    async (req: FastifyRequest<{ Params: { scheduleId: string }; Body: ScheduleParticipantCreate }>, reply: FastifyReply) => {
+    async (req: FastifyRequest<{ Params: { departmentId: string; scheduleId: string }; Body: ScheduleParticipantCreate }>, reply: FastifyReply) => {
       try {
-        const { scheduleId } = req.params;
-        const participantData: ScheduleParticipantCreate = { ...req.body, scheduleId };
-
-        const participant = await scheduleParticipantUseCase.addParticipant(participantData);
-        return reply.status(201).send(participant);
+        const { departmentId, scheduleId } = req.params;
+        const participantData: ScheduleParticipantCreate = { ...req.body, scheduleId, departmentId };
+  
+        
+        const participants = await scheduleParticipantUseCase.addParticipant(participantData);
+        return reply.status(201).send(participants);
       } catch (error) {
+        console.error(error);  
         if (error instanceof Error && error.message === "Participant already exists in this schedule") {
           return reply.code(409).send({ message: 'Participant already exists in this schedule' });
         }
-        return reply.code(500).send({ message: 'Internal Server Error' });
+        return reply.code(500).send({ message: 'Internal server error' });
       }
     }
   );
+  
+  
 
-  fastify.delete<{ Params: { scheduleId: string; participantId: string } }>(
-    '/schedules/:scheduleId/participants/:participantId',
+  fastify.delete<{ Params: { departmentId: string; scheduleId: string; participantId: string } }>(
+    '/departments/:departmentId/schedules/:scheduleId/participants/:participantId',
     {
       preHandler: verifyUserRole('ADMIN', 'LEADER'), 
       schema: {
@@ -48,11 +52,11 @@ export async function scheduleParticipantRoutes(fastify: FastifyInstance) {
         ...ScheduleParticipantSchemas.removeParticipant,
       },
     },
-    async (req: FastifyRequest<{ Params: { scheduleId: string; participantId: string } }>, reply: FastifyReply) => {
-      const { scheduleId, participantId } = req.params;
+    async (req: FastifyRequest<{ Params: { departmentId: string; scheduleId: string; participantId: string } }>, reply: FastifyReply) => {
+      const { departmentId, scheduleId, participantId } = req.params;
   
       try {
-        await scheduleParticipantUseCase.removeParticipant(participantId);
+        await scheduleParticipantUseCase.removeParticipant(departmentId, participantId);
         return reply.code(204).send(); 
       } catch (error: unknown) {
         if (error instanceof Error) { 
@@ -65,8 +69,8 @@ export async function scheduleParticipantRoutes(fastify: FastifyInstance) {
     }
   );
   
-  fastify.patch<{ Params: { participantId: string }; Body: { status: string } }>(
-    '/schedules/:scheduleId/participants/:participantId/status',
+  fastify.patch<{ Params: { departmentId: string; scheduleId: string; participantId: string }; Body: { status: string } }>(
+    '/departments/:departmentId/schedules/:scheduleId/participants/:participantId/status',
     {
       preHandler: verifyUserRole('ADMIN', 'LEADER'),
       schema: {
@@ -83,13 +87,14 @@ export async function scheduleParticipantRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    async (req: FastifyRequest<{ Params: { participantId: string }; Body: { status: string } }>, reply: FastifyReply) => {
-      const { participantId } = req.params;
+    async (req: FastifyRequest<{ Params: { departmentId: string; scheduleId: string; participantId: string }; Body: { status: string } }>, reply: FastifyReply) => {
+      const { departmentId, scheduleId, participantId } = req.params;
       const { status: statusString } = req.body;
       const status: ParticipantStatus = statusString as ParticipantStatus;
-  
+    
       try {
-        await scheduleParticipantUseCase.updateParticipantStatus(participantId, status);
+        
+        await scheduleParticipantUseCase.updateParticipantStatus(scheduleId, participantId, status, departmentId);
         return reply.code(204).send(); 
       } catch (error) {
         if (error instanceof Error && error.message === 'Invalid status') {
@@ -99,9 +104,10 @@ export async function scheduleParticipantRoutes(fastify: FastifyInstance) {
       }
     }
   );
+  
 
-  fastify.get<{ Params: { scheduleId: string } }>(
-    '/schedules/:scheduleId/participants',
+  fastify.get<{ Params: { departmentId: string; scheduleId: string } }>(
+    '/departments/:departmentId/schedules/:scheduleId/participants',
     {
       preHandler: verifyUserRole('ADMIN', 'LEADER'),
       schema: {
@@ -109,11 +115,11 @@ export async function scheduleParticipantRoutes(fastify: FastifyInstance) {
         ...ScheduleParticipantSchemas.listParticipants,
       },
     },
-    async (req: FastifyRequest<{ Params: { scheduleId: string } }>, reply: FastifyReply) => {
-      const { scheduleId } = req.params;
+    async (req: FastifyRequest<{ Params: { departmentId: string; scheduleId: string } }>, reply: FastifyReply) => {
+      const { departmentId, scheduleId } = req.params;
   
       try {
-        const participants = await scheduleParticipantUseCase.listParticipants(scheduleId);
+        const participants = await scheduleParticipantUseCase.listParticipants(departmentId, scheduleId);
         return reply.code(200).send(participants);
       } catch (error) {
         if (error instanceof Error && error.message === 'Schedule not found') {
@@ -124,8 +130,8 @@ export async function scheduleParticipantRoutes(fastify: FastifyInstance) {
     }
   );
 
-  fastify.get<{ Params: { scheduleId: string; participantId: string } }>(
-    '/schedules/:scheduleId/participants/:participantId',
+  fastify.get<{ Params: { departmentId: string; scheduleId: string; participantId: string } }>(
+    '/departments/:departmentId/schedules/:scheduleId/participants/:participantId',
     {
       preHandler: verifyUserRole('ADMIN', 'LEADER'),
       schema: {
@@ -133,11 +139,11 @@ export async function scheduleParticipantRoutes(fastify: FastifyInstance) {
         ...ScheduleParticipantSchemas.findParticipantById,
       },
     },
-    async (req: FastifyRequest<{ Params: { scheduleId: string; participantId: string } }>, reply: FastifyReply) => {
-      const { scheduleId, participantId } = req.params;
+    async (req: FastifyRequest<{ Params: { departmentId: string; scheduleId: string; participantId: string } }>, reply: FastifyReply) => {
+      const { departmentId, scheduleId, participantId } = req.params;
   
       try {
-        const participant = await scheduleParticipantUseCase.findParticipantById(scheduleId, participantId);
+        const participant = await scheduleParticipantUseCase.findParticipantById(departmentId, scheduleId, participantId);
         if (!participant) {
           return reply.code(404).send({ message: 'Participant not found' });
         }

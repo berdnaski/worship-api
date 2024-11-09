@@ -39,8 +39,8 @@ export const ScheduleSchemas = {
       },
     },
   },
-  
-  
+
+
   listSchemas: {
     description: 'List all schedules for a specific department',
     tags: ['Schedule'],
@@ -63,6 +63,35 @@ export const ScheduleSchemas = {
             date: { type: 'string', format: 'date-time', description: 'The date of the schedule' },
             createdAt: { type: 'string', format: 'date-time', description: 'The date the schedule was created' },
             updatedAt: { type: 'string', format: 'date-time', description: 'The date the schedule was last updated' },
+            participants: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  status: { type: 'string', description: 'The status of the participant', enum: ['PENDING', 'CONFIRMED', 'DECLINED'] },
+                  user: {
+                    type: 'object',
+                    properties: {
+                      id: { type: 'string', description: 'The unique identifier of the user' },
+                      name: { type: 'string', description: 'The name of the user' },
+                      email: { type: 'string', description: 'The email of the user' },
+                      avatarUrl: { type: 'string', description: 'The avatar URL of the user' },
+                    },
+                  },
+                },
+              },
+            },
+            songs: {  
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  id: { type: 'string', description: 'The unique identifier of the song' },
+                  title: { type: 'string', description: 'The title of the song' },
+                  artist: { type: 'string', description: 'The artist of the song' },
+                },
+              },
+            },
           },
         },
       },
@@ -97,6 +126,35 @@ export const ScheduleSchemas = {
           departmentId: { type: 'string', description: 'The unique identifier of the department' },
           createdAt: { type: 'string', format: 'date-time', description: 'The date the schedule was created' },
           updatedAt: { type: 'string', format: 'date-time', description: 'The date the schedule was last updated' },
+          participants: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                status: { type: 'string', description: 'The status of the participant', enum: ['PENDING', 'CONFIRMED', 'DECLINED'] },
+                user: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'string', description: 'The unique identifier of the user' },
+                    name: { type: 'string', description: 'The name of the user' },
+                    email: { type: 'string', description: 'The email of the user' },
+                    avatarUrl: { type: 'string', description: 'The avatar URL of the user' },
+                  },
+                },
+              },
+            },
+          },
+          songs: {  
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                id: { type: 'string', description: 'The unique identifier of the song' },
+                title: { type: 'string', description: 'The title of the song' },
+                artist: { type: 'string', description: 'The artist of the song' },
+              },
+            },
+          },
         },
       },
       404: {
@@ -115,6 +173,7 @@ export const ScheduleSchemas = {
       },
     },
   },
+
 
   updateSchedule: {
     description: 'Update an existing schedule',
@@ -187,5 +246,6 @@ export const ScheduleSchemas = {
         },
       },
     },
-  },
+  }
+  
 };

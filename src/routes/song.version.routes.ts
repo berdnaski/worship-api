@@ -84,8 +84,6 @@ export async function songVersionRoutes(fastify: FastifyInstance) {
     }
   });
   
-  
-
   fastify.delete<{ Params: { songId: string; songVersionId: string } }>('/songs/:songId/song-versions/:songVersionId', {
     schema: {
       security: [{

@@ -16,19 +16,51 @@ class SchedulesRepositoryPrisma implements SchedulesRepository {
   async findAllByDepartment(departmentId: string): Promise<ScheduleResponse[]> {
     return await prisma.schedule.findMany({
       where: {
-        departmentId
-      }
+        departmentId,
+      },
+      include: {
+        participants: {
+          select: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                avatarUrl: true,  
+              },
+            },
+            status: true,  
+          },
+        },
+        songs: { 
+          select: {
+            id: true,
+            title: true,
+            artist: true,
+          },
+        },
+      },
     });
   }
-
+  
+  
   async findByDepartmentAndId(departmentId: string, scheduleId: string): Promise<Schedule | null> {
     return await prisma.schedule.findFirst({
       where: {
         id: scheduleId,
         departmentId: departmentId,
       },
+      include: {
+        participants: {
+          include: {
+            user: true,  
+          },
+        },
+        songs: true, 
+      },
     });
   }
+  
 
   async update(data: Schedule & { departmentId: string }): Promise<Schedule> {
     return await prisma.schedule.update({
@@ -44,12 +76,27 @@ class SchedulesRepositoryPrisma implements SchedulesRepository {
   }
 
   async delete(scheduleId: string): Promise<void> {
-    await prisma.schedule.delete({
-      where: {
-        id: scheduleId,
-      }
-    })
+    try {
+      
+      await prisma.scheduleParticipant.deleteMany({
+        where: {
+          scheduleId: scheduleId,
+        },
+      });
+  
+      
+      await prisma.schedule.delete({
+        where: {
+          id: scheduleId,
+        },
+      });
+    } catch (error) {
+      console.error("Error deleting schedule:", error);
+      throw new Error("Failed to delete schedule");
+    }
   }
+  
+  
 }
 
 export { SchedulesRepositoryPrisma }

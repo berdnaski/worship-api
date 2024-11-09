@@ -5,9 +5,10 @@ export const ScheduleParticipantSchemas = {
     params: {
       type: 'object',
       properties: {
+        departmentId: { type: 'string', description: 'The unique identifier of the department' },
         scheduleId: { type: 'string', description: 'The unique identifier of the schedule' },
       },
-      required: ['scheduleId'],
+      required: ['departmentId', 'scheduleId'],
     },
     body: {
       type: 'object',
@@ -18,33 +19,38 @@ export const ScheduleParticipantSchemas = {
     },
     response: {
       201: {
-        description: 'Participant added successfully',
-        type: 'object',
-        properties: {
-          id: { type: 'string', description: 'The unique identifier of the schedule participant' },
-          scheduleId: { type: 'string', description: 'The unique identifier of the schedule' },
-          userId: { type: 'string', description: 'The unique identifier of the user' },
-          status: { type: 'string', enum: ['PENDING', 'CONFIRMED', 'REJECTED'], description: 'The status of the participant' },
-          createdAt: { type: 'string', format: 'date-time', description: 'The date the participant was added' },
-          updatedAt: { type: 'string', format: 'date-time', description: 'The date the participant was last updated' },
+        description: 'List of participants after adding the new participant',
+        type: 'array', // Define como uma lista
+        items: {
+          type: 'object',
+          properties: {
+            id: { type: 'string', description: 'The unique identifier of the schedule participant' },
+            scheduleId: { type: 'string', description: 'The unique identifier of the schedule' },
+            userId: { type: 'string', description: 'The unique identifier of the user' },
+            departmentId: { type: 'string', description: 'The unique identifier of the department the participant belongs to' },
+            status: { type: 'string', enum: ['PENDING', 'CONFIRMED', 'REJECTED'], description: 'The status of the participant' },
+            createdAt: { type: 'string', format: 'date-time', description: 'The date the participant was added' },
+            updatedAt: { type: 'string', format: 'date-time', description: 'The date the participant was last updated' },
+          },
         },
       },
       409: {
         description: 'Participant already exists in this schedule',
         type: 'object',
         properties: {
-          message: { type: 'string' },
+          message: { type: 'string', description: 'A message indicating the participant already exists in this schedule' },
         },
       },
       500: {
         description: 'Internal server error',
         type: 'object',
         properties: {
-          message: { type: 'string' },
+          message: { type: 'string', description: 'An error message indicating the failure' },
         },
       },
     },
   },
+  
 
   updateParticipantStatus: {
     description: 'Update the status of a participant',
@@ -93,17 +99,18 @@ export const ScheduleParticipantSchemas = {
         },
       },
     },
-  },  
+  },
 
   listParticipants: {
-    description: 'List all participants of a specific schedule',
+    description: 'List all participants of a specific schedule within a department',
     tags: ['Schedule Participant'],
     params: {
       type: 'object',
       properties: {
+        departmentId: { type: 'string', description: 'The unique identifier of the department' },
         scheduleId: { type: 'string', description: 'The unique identifier of the schedule' },
       },
-      required: ['scheduleId'],
+      required: ['departmentId', 'scheduleId'],
     },
     response: {
       200: {
@@ -115,6 +122,7 @@ export const ScheduleParticipantSchemas = {
             id: { type: 'string', description: 'The unique identifier of the schedule participant' },
             scheduleId: { type: 'string', description: 'The unique identifier of the schedule' },
             userId: { type: 'string', description: 'The unique identifier of the user' },
+            departmentId: { type: 'string', description: 'The unique identifier of the department the participant belongs to' },
             status: { type: 'string', enum: ['PENDING', 'CONFIRMED', 'REJECTED'], description: 'The status of the participant' },
             createdAt: { type: 'string', format: 'date-time', description: 'The date the participant was added' },
             updatedAt: { type: 'string', format: 'date-time', description: 'The date the participant was last updated' },
@@ -136,7 +144,9 @@ export const ScheduleParticipantSchemas = {
         },
       },
     },
-  },  
+  },
+  
+  
 
   removeParticipant: {
     description: 'Remove a participant from a schedule',
@@ -168,7 +178,7 @@ export const ScheduleParticipantSchemas = {
         },
       },
     },
-  },  
+  },
 
   findParticipantById: {
     description: 'Find a specific participant of a schedule by their ID',
@@ -189,6 +199,7 @@ export const ScheduleParticipantSchemas = {
           id: { type: 'string', description: 'The unique identifier of the schedule participant' },
           scheduleId: { type: 'string', description: 'The unique identifier of the schedule' },
           userId: { type: 'string', description: 'The unique identifier of the user' },
+          departmentId: { type: 'string', description: 'The unique identifier of the department the participant belongs to' }, 
           status: { type: 'string', enum: ['PENDING', 'CONFIRMED', 'REJECTED'], description: 'The status of the participant' },
           createdAt: { type: 'string', format: 'date-time', description: 'The date the participant was added' },
           updatedAt: { type: 'string', format: 'date-time', description: 'The date the participant was last updated' },
@@ -209,5 +220,5 @@ export const ScheduleParticipantSchemas = {
         },
       },
     },
-  },  
+  },
 };

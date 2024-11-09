@@ -81,23 +81,24 @@ export async function schedulesRoutes(fastify: FastifyInstance) {
         ...ScheduleSchemas.updateSchedule,
       },
     },
-    async (req: FastifyRequest<{ Params: { departmentId: string; scheduleId: string }; Body: ScheduleUpdate }>, reply: FastifyReply) => {
+    async (req, reply) => {
       try {
         const { departmentId, scheduleId } = req.params;
         const data: ScheduleUpdate = req.body;
-
+  
         const updatedSchedule = await schedulesUseCase.update(departmentId, scheduleId, data);
-
+  
         if (!updatedSchedule) {
           return reply.code(404).send({ message: 'Schedule not found' });
         }
-
+  
         return reply.send(updatedSchedule);
       } catch (error) {
         return reply.code(500).send({ message: 'Internal Server Error' });
       }
     }
   );
+  
 
   fastify.delete<{ Params: { departmentId: string; scheduleId: string } }>(
     '/departments/:departmentId/schedules/:scheduleId',
@@ -111,15 +112,15 @@ export async function schedulesRoutes(fastify: FastifyInstance) {
     async (req: FastifyRequest<{ Params: { departmentId: string; scheduleId: string } }>, reply: FastifyReply) => {
       try {
         const { departmentId, scheduleId } = req.params;
-  
         await schedulesUseCase.delete(departmentId, scheduleId);
         return reply.code(204).send();
       } catch (error) {
-        if (error instanceof Error && error.message === "Schedule not found") {
+        if (error instanceof Error && error.message === 'Schedule not found') {
           return reply.code(404).send({ message: 'Schedule not found' });
         }
         return reply.code(500).send({ message: 'Internal Server Error' });
       }
     }
   );
+  
 }

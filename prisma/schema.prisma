@@ -32,14 +32,14 @@ model User {
 }
 
 model Department {
-  id          String   @id @default(uuid())
-  name        String
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  users     User[]
-  schedules Schedule[]
+  id                  String                @id @default(uuid())
+  name                String
+  description         String?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  users               User[]
+  schedules           Schedule[]
+  ScheduleParticipant ScheduleParticipant[]
 
   @@map("departments")
 }
@@ -53,6 +53,7 @@ model Schedule {
   updatedAt    DateTime @updatedAt
 
   department   Department            @relation(fields: [departmentId], references: [id])
+  songs        Song[]                @relation("ScheduleSongs")
   participants ScheduleParticipant[]
 
   @@map("schedules")
@@ -65,17 +66,19 @@ enum ParticipantStatus {
 }
 
 model ScheduleParticipant {
-  id         String            @id @default(uuid())
-  scheduleId String
-  userId     String
-  status     ParticipantStatus @default(PENDING)
-  createdAt  DateTime          @default(now())
-  updatedAt  DateTime          @updatedAt
+  id           String            @id @default(uuid())
+  scheduleId   String
+  userId       String
+  departmentId String
+  status       ParticipantStatus @default(PENDING)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
 
-  schedule Schedule @relation(fields: [scheduleId], references: [id])
-  user     User     @relation(fields: [userId], references: [id])
+  schedule   Schedule   @relation(fields: [scheduleId], references: [id])
+  user       User       @relation(fields: [userId], references: [id])
+  department Department @relation(fields: [departmentId], references: [id])
 
-  @@unique([userId, scheduleId])
+  @@unique([userId, scheduleId, departmentId])
   @@map("schedule_participants")
 }
 
@@ -87,6 +90,9 @@ model Song {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   SongVersion SongVersion[]
+
+  scheduleId String?
+  schedule   Schedule? @relation("ScheduleSongs", fields: [scheduleId], references: [id])
 
   @@map("songs")
 }

@@ -133,19 +133,27 @@ export async function departmentRoutes(fastify: FastifyInstance) {
     }
   });
 
-  fastify.post('/departments/:departmentId/users/:id', { 
-    preHandler: verifyUserRole('ADMIN', 'LEADER'), 
+  interface Params {
+    departmentId: string;
+    id: string;
+  }
+  
+  interface Params {
+    departmentId: string;
+    id: string;
+  }
+  
+  fastify.post<{ Params: Params }>('/departments/:departmentId/users/:id', {
+    preHandler: [verifyJWT, verifyUserRole("ADMIN", "LEADER")],
     schema: {
-      security: [
-        { bearerAuth: [] } 
-      ],
+      security: [{ bearerAuth: [] }],
       description: 'Add a user to a department',
-      tags: ['Department'], 
+      tags: ['Department'],
       params: {
         type: 'object',
         properties: {
           departmentId: { type: 'string', description: 'ID of the department' },
-          id: { type: 'string', description: 'ID of the user to add' }
+          id: { type: 'string', description: 'ID of the user to add' },
         },
         required: ['departmentId', 'id'],
       },
@@ -154,24 +162,27 @@ export async function departmentRoutes(fastify: FastifyInstance) {
           description: 'User added to department successfully.',
           type: 'object',
           properties: {
-            message: { type: 'string' }
+            message: { type: 'string' },
           },
         },
         400: {
           description: 'Bad Request',
         },
       },
-    }
-  }, async (req: FastifyRequest, reply: FastifyReply) => {
-    const { departmentId, id } = req.params as { departmentId: string; id: string };
-    
+    },
+  }, async (req: FastifyRequest<{ Params: Params }>, reply: FastifyReply) => {
+    const { departmentId, id } = req.params;
+  
     try {
       await departmentUseCase.addUserToDepartment(departmentId, id);
-      return reply.status(201).send({ message: "User added to department successfully." });
+      return reply.status(201).send({ message: 'User added to department successfully.' });
     } catch (error) {
       return reply.code(400).send();
     }
   });
+  
+
+  
 
   fastify.delete('/departments/:departmentId/users/:userId', { 
     preHandler: verifyUserRole('ADMIN', 'LEADER'), 

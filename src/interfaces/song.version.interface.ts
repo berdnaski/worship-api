@@ -35,6 +35,7 @@ export interface SongVersionUpdate {
 }
 
 export interface SongVersionResponse {
+  id: string;
   versionName: string;
   classification: string;
   key: string;

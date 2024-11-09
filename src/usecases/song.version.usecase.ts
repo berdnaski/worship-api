@@ -29,6 +29,7 @@ class SongVersionUseCase {
     const songVersions = await this.songVersionRepository.findBySongId(songId); 
   
     return songVersions.map(songVersion => ({
+      id: songVersion.id,
       versionName: songVersion.versionName,
       classification: songVersion.classification,
       key: songVersion.key,

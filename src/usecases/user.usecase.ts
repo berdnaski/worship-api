@@ -110,6 +110,7 @@ class UserUseCase {
       name: user.name,
       role: user.role,
       initialSetupCompleted: user.initialSetupCompleted,
+      department: user.department,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     }));

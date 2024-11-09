@@ -8,17 +8,18 @@ class ScheduleParticipantRepositoryPrisma implements ScheduleParticipantReposito
       data: {
         scheduleId: data.scheduleId,
         userId: data.userId,
+        departmentId: data.departmentId, 
       },
     });
   }
+  
 
-  async findUnique(where: { userId_scheduleId: { userId: string; scheduleId: string } }): Promise<ScheduleParticipant | null> {
-    return await prisma.scheduleParticipant.findUnique({
+  async findUnique(where: { userId: string; scheduleId: string; departmentId: string }): Promise<ScheduleParticipant | null> {
+    return await prisma.scheduleParticipant.findFirst({
       where: {
-        userId_scheduleId: {
-          userId: where.userId_scheduleId.userId,
-          scheduleId: where.userId_scheduleId.scheduleId,
-        },
+        userId: where.userId,
+        scheduleId: where.scheduleId,
+        departmentId: where.departmentId,
       },
     });
   }
@@ -42,11 +43,15 @@ class ScheduleParticipantRepositoryPrisma implements ScheduleParticipantReposito
     });
   }
 
-  async findScheduleById(scheduleId: string): Promise<Schedule | null> {
-    return await prisma.schedule.findUnique({
-      where: { id: scheduleId }
+  async findScheduleById(scheduleId: string, departmentId: string): Promise<Schedule | null> {
+    return await prisma.schedule.findFirst({
+      where: {
+        id: scheduleId,
+        departmentId: departmentId,
+      },
     });
   }
+  
 
   async findParticipantsByScheduleId(scheduleId: string): Promise<ScheduleParticipant[]> {
     return await prisma.scheduleParticipant.findMany({
@@ -62,6 +67,35 @@ class ScheduleParticipantRepositoryPrisma implements ScheduleParticipantReposito
         id: participantId,
         scheduleId: scheduleId,
       },
+    });
+  }
+
+  async findParticipantByIdAndDepartmentId(scheduleId: string, participantId: string, departmentId: string): Promise<ScheduleParticipant | null> {
+    return await prisma.scheduleParticipant.findFirst({
+      where: {
+        id: participantId,
+        scheduleId: scheduleId,
+        department: {
+          id: departmentId,  
+        },
+      },
+    });
+  }
+  
+
+  
+  async findParticipantsByScheduleIdAndDepartmentId(scheduleId: string, departmentId: string): Promise<ScheduleParticipant[]> {
+    return await prisma.scheduleParticipant.findMany({
+      where: {
+        scheduleId: scheduleId,
+        departmentId: departmentId,
+      },
+    });
+  }
+
+  async findMany(where: { userId: string; scheduleId: string; departmentId: string }): Promise<ScheduleParticipant[]> {
+    return prisma.scheduleParticipant.findMany({
+      where: where,  
     });
   }
 }

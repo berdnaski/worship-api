@@ -26,6 +26,7 @@ class SongUseCase {
       title: song.title,
       artist: song.artist,
       genre: song.genre,
+      scheduleId: song.scheduleId ?? undefined,
       createdAt: song.createdAt,
       updatedAt: song.updatedAt,
     }))

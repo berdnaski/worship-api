@@ -9,6 +9,7 @@ export const SongSchemas = {
         title: { type: 'string', description: 'Title of the song' },
         artist: { type: 'string', description: 'Artist of the song' },
         genre: { type: 'string', nullable: true, description: 'Genre of the song' },
+        scheduleId: { type: 'string', nullable: true, description: 'Schedule ID associated with the song' }, // Adicionado
       },
     },
     response: {
@@ -20,6 +21,7 @@ export const SongSchemas = {
           title: { type: 'string', description: 'Title of the song' },
           artist: { type: 'string', description: 'Artist of the song' },
           genre: { type: 'string', nullable: true, description: 'Genre of the song' },
+          scheduleId: { type: 'string', nullable: true, description: 'Schedule ID associated with the song' }, // Adicionado
           createdAt: { type: 'string', format: 'date-time', description: 'Creation date of the song' },
           updatedAt: { type: 'string', format: 'date-time', description: 'Last update date of the song' },
         },
@@ -48,6 +50,7 @@ export const SongSchemas = {
             title: { type: 'string', description: 'Title of the song' },
             artist: { type: 'string', description: 'Artist of the song' },
             genre: { type: 'string', nullable: true, description: 'Genre of the song' },
+            scheduleId: { type: 'string', nullable: true, description: 'Schedule ID associated with the song' }, // Adicionado
             createdAt: { type: 'string', format: 'date-time', description: 'Creation date of the song' },
             updatedAt: { type: 'string', format: 'date-time', description: 'Last update date of the song' },
           },
@@ -75,6 +78,7 @@ export const SongSchemas = {
           title: { type: 'string', description: 'Title of the song' },
           artist: { type: 'string', description: 'Artist of the song' },
           genre: { type: 'string', nullable: true, description: 'Genre of the song' },
+          scheduleId: { type: 'string', nullable: true, description: 'Schedule ID associated with the song' }, // Adicionado
           createdAt: { type: 'string', format: 'date-time', description: 'Creation date of the song' },
           updatedAt: { type: 'string', format: 'date-time', description: 'Last update date of the song' },
         },
@@ -144,6 +148,7 @@ export const SongSchemas = {
         title: { type: 'string', description: 'Title of the song' },
         artist: { type: 'string', description: 'Artist of the song' },
         genre: { type: 'string', nullable: true, description: 'Genre of the song' },
+        scheduleId: { type: 'string', nullable: true, description: 'Schedule ID associated with the song' }, // Adicionado
       },
     },
     response: {
@@ -155,6 +160,7 @@ export const SongSchemas = {
           title: { type: 'string', description: 'Title of the song' },
           artist: { type: 'string', description: 'Artist of the song' },
           genre: { type: 'string', nullable: true, description: 'Genre of the song' },
+          scheduleId: { type: 'string', nullable: true, description: 'Schedule ID associated with the song' }, // Adicionado
           createdAt: { type: 'string', format: 'date-time', description: 'Creation date of the song' },
           updatedAt: { type: 'string', format: 'date-time', description: 'Last update date of the song' },
         },
